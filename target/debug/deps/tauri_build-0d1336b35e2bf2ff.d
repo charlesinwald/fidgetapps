@@ -1,0 +1,12 @@
+/workspace/target/debug/deps/libtauri_build-0d1336b35e2bf2ff.rmeta: /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-build-2.2.0/src/lib.rs /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-build-2.2.0/src/acl.rs /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-build-2.2.0/src/manifest.rs /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-build-2.2.0/src/mobile.rs /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-build-2.2.0/src/static_vcruntime.rs /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-build-2.2.0/src/windows-app-manifest.xml
+
+/workspace/target/debug/deps/libtauri_build-0d1336b35e2bf2ff.rlib: /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-build-2.2.0/src/lib.rs /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-build-2.2.0/src/acl.rs /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-build-2.2.0/src/manifest.rs /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-build-2.2.0/src/mobile.rs /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-build-2.2.0/src/static_vcruntime.rs /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-build-2.2.0/src/windows-app-manifest.xml
+
+/workspace/target/debug/deps/tauri_build-0d1336b35e2bf2ff.d: /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-build-2.2.0/src/lib.rs /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-build-2.2.0/src/acl.rs /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-build-2.2.0/src/manifest.rs /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-build-2.2.0/src/mobile.rs /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-build-2.2.0/src/static_vcruntime.rs /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-build-2.2.0/src/windows-app-manifest.xml
+
+/usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-build-2.2.0/src/lib.rs:
+/usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-build-2.2.0/src/acl.rs:
+/usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-build-2.2.0/src/manifest.rs:
+/usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-build-2.2.0/src/mobile.rs:
+/usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-build-2.2.0/src/static_vcruntime.rs:
+/usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-build-2.2.0/src/windows-app-manifest.xml:

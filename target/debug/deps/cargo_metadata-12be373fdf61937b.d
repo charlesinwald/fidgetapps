@@ -1,0 +1,11 @@
+/workspace/target/debug/deps/libcargo_metadata-12be373fdf61937b.rmeta: /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/cargo_metadata-0.19.2/src/lib.rs /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/cargo_metadata-0.19.2/src/dependency.rs /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/cargo_metadata-0.19.2/src/diagnostic.rs /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/cargo_metadata-0.19.2/src/errors.rs /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/cargo_metadata-0.19.2/src/messages.rs
+
+/workspace/target/debug/deps/libcargo_metadata-12be373fdf61937b.rlib: /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/cargo_metadata-0.19.2/src/lib.rs /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/cargo_metadata-0.19.2/src/dependency.rs /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/cargo_metadata-0.19.2/src/diagnostic.rs /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/cargo_metadata-0.19.2/src/errors.rs /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/cargo_metadata-0.19.2/src/messages.rs
+
+/workspace/target/debug/deps/cargo_metadata-12be373fdf61937b.d: /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/cargo_metadata-0.19.2/src/lib.rs /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/cargo_metadata-0.19.2/src/dependency.rs /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/cargo_metadata-0.19.2/src/diagnostic.rs /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/cargo_metadata-0.19.2/src/errors.rs /usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/cargo_metadata-0.19.2/src/messages.rs
+
+/usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/cargo_metadata-0.19.2/src/lib.rs:
+/usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/cargo_metadata-0.19.2/src/dependency.rs:
+/usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/cargo_metadata-0.19.2/src/diagnostic.rs:
+/usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/cargo_metadata-0.19.2/src/errors.rs:
+/usr/local/cargo/registry/src/index.crates.io-6f17d22bba15001f/cargo_metadata-0.19.2/src/messages.rs:
