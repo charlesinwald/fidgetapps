@@ -6,10 +6,12 @@ import Settings from "./Settings";
 type AppConfig = {
   id: number;
   name: string;
-  icon: keyof typeof lucideIcons;
+  icon: keyof typeof lucideIcons | string;
   color: string;
   iconColor: string;
   command: string;
+  isCustomIcon?: boolean;
+  customIconData?: string;
 };
 
 const iconMap = lucideIcons;
@@ -62,7 +64,9 @@ export default function AppLauncher() {
 
   return (
     <div className="min-h-screen min-w-screen bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 flex items-center justify-center p-4 relative overflow-hidden">
-      {showSettings && <Settings onClose={handleSettingsClose} />}
+      {showSettings && (
+        <Settings onClose={handleSettingsClose} onSave={loadConfig} />
+      )}
       {/* Glassmorphism Container */}
       <div className="relative w-[90vh] h-[90vh]">
         {/* Main launcher container */}
@@ -74,12 +78,50 @@ export default function AppLauncher() {
           {/* App grid */}
           <div className="grid grid-cols-2 gap-8 w-full h-full p-8">
             {apps.map((app) => {
-              const IconComponent = iconMap[app.icon] as React.ElementType;
-              if (!IconComponent) {
-                // Render a fallback or null
-                return null;
-              }
               const isOpening = openingApp === app.id;
+
+              const renderIcon = () => {
+                if (app.isCustomIcon && app.customIconData) {
+                  return (
+                    <img
+                      src={app.customIconData}
+                      alt={app.name}
+                      className={`w-40 h-40 object-cover rounded-xl transition-all duration-300 ${
+                        isOpening ? "scale-110" : ""
+                      }`}
+                    />
+                  );
+                }
+
+                const IconComponent = iconMap[
+                  app.icon as keyof typeof lucideIcons
+                ] as React.ElementType;
+                if (IconComponent) {
+                  return (
+                    <IconComponent
+                      className={`w-40 h-40 ${
+                        app.iconColor
+                      } transition-all duration-300 ${
+                        isOpening ? "scale-110" : ""
+                      }`}
+                      strokeWidth={1.5}
+                    />
+                  );
+                }
+
+                // Fallback icon
+                return (
+                  <div
+                    className={`w-40 h-40 ${
+                      app.iconColor
+                    } flex items-center justify-center text-6xl font-bold rounded-xl transition-all duration-300 ${
+                      isOpening ? "scale-110" : ""
+                    }`}
+                  >
+                    ?
+                  </div>
+                );
+              };
 
               return (
                 <button
@@ -100,14 +142,7 @@ export default function AppLauncher() {
                       isOpening ? "scale-110 shadow-xl" : ""
                     }`}
                   >
-                    <IconComponent
-                      className={`w-40 h-40 ${
-                        app.iconColor
-                      } transition-all duration-300 ${
-                        isOpening ? "scale-110" : ""
-                      }`}
-                      strokeWidth={1.5}
-                    />
+                    {renderIcon()}
                   </div>
 
                   {/* Ripple effect */}
@@ -141,18 +176,45 @@ export default function AppLauncher() {
             {(() => {
               const app = apps.find((a) => a.id === openingApp);
               if (!app) return null;
-              const IconComponent = iconMap[app.icon] as React.ElementType;
-              if (!IconComponent) return null;
+
+              const renderPreviewIcon = () => {
+                if (app.isCustomIcon && app.customIconData) {
+                  return (
+                    <img
+                      src={app.customIconData}
+                      alt={app.name}
+                      className="w-16 h-16 object-cover rounded-lg"
+                    />
+                  );
+                }
+
+                const IconComponent = iconMap[
+                  app.icon as keyof typeof lucideIcons
+                ] as React.ElementType;
+                if (IconComponent) {
+                  return (
+                    <IconComponent
+                      className={`w-16 h-16 ${app.iconColor}`}
+                      strokeWidth={1.5}
+                    />
+                  );
+                }
+
+                return (
+                  <div
+                    className={`w-16 h-16 ${app.iconColor} flex items-center justify-center text-2xl font-bold rounded-lg`}
+                  >
+                    ?
+                  </div>
+                );
+              };
 
               return (
                 <div className="animate-in zoom-in duration-500 ease-out">
                   <div
                     className={`${app.color} rounded-3xl p-8 shadow-2xl animate-pulse`}
                   >
-                    <IconComponent
-                      className={`w-16 h-16 ${app.iconColor}`}
-                      strokeWidth={1.5}
-                    />
+                    {renderPreviewIcon()}
                   </div>
 
                   {/* App name */}

@@ -4,6 +4,8 @@
 use tauri::Manager;
 use tauri::AppHandle;
 use std::fs;
+use std::path::Path;
+use std::io::{BufRead, BufReader};
 
 #[tauri::command]
 fn get_apps_config(app_handle: AppHandle) -> String {
@@ -55,6 +57,41 @@ fn launch_application(command: String) {
   }
 }
 
+#[tauri::command]
+fn list_system_apps() -> String {
+    let mut apps = Vec::new();
+    let pattern = "/usr/share/applications/*.desktop";
+    for entry in glob::glob(pattern).expect("Failed to read glob pattern") {
+        if let Ok(path) = entry {
+            if let Ok(file) = std::fs::File::open(&path) {
+                let reader = BufReader::new(file);
+                let mut name: Option<String> = None;
+                let mut exec: Option<String> = None;
+                for line in reader.lines().flatten() {
+                    if line.starts_with("Name=") && name.is_none() {
+                        name = Some(line[5..].to_string());
+                    } else if line.starts_with("Exec=") && exec.is_none() {
+                        // Remove arguments like %U, %f, etc.
+                        let mut exec_val = line[5..].split_whitespace().next().unwrap_or("").to_string();
+                        // Remove quotes if present
+                        if exec_val.starts_with('"') && exec_val.ends_with('"') {
+                            exec_val = exec_val.trim_matches('"').to_string();
+                        }
+                        exec = Some(exec_val);
+                    }
+                    if name.is_some() && exec.is_some() {
+                        break;
+                    }
+                }
+                if let (Some(name), Some(exec)) = (name, exec) {
+                    apps.push(serde_json::json!({"name": name, "exec": exec}));
+                }
+            }
+        }
+    }
+    serde_json::to_string(&apps).unwrap_or("[]".to_string())
+}
+
 fn main() {
     // Set an environment variable programmatically
     std::env::set_var("GDK_BACKEND", "x11");
@@ -83,7 +120,8 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             launch_application,
             get_apps_config,
-            save_apps_config
+            save_apps_config,
+            list_system_apps
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

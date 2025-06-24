@@ -931,6 +931,7 @@ dependencies = [
 name = "fidgetapps"
 version = "0.1.0"
 dependencies = [
+ "glob",
  "serde",
  "serde_json",
  "tauri",
