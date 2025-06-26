@@ -158,7 +158,15 @@ export function ColorPicker({
   ];
 
   return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
+    <Popover
+      open={isOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open);
+        if (!open) {
+          onChange(colorInput);
+        }
+      }}
+    >
       <PopoverTrigger asChild>
         <Button
           variant="outline"

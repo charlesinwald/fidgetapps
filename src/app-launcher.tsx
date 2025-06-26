@@ -136,11 +136,25 @@ export default function AppLauncher() {
                 >
                   {/* Icon background */}
                   <div
-                    className={`${
-                      app.color
-                    } rounded-2xl p-6 shadow-md transition-all duration-300 ${
+                    className={`rounded-2xl p-6 shadow-md transition-all duration-300 ${
                       isOpening ? "scale-110 shadow-xl" : ""
                     }`}
+                    style={
+                      app.color &&
+                      (app.color.startsWith("hsl") || app.color.startsWith("#"))
+                        ? { backgroundColor: app.color }
+                        : undefined
+                    }
+                    {...(app.color &&
+                    !(app.color.startsWith("hsl") || app.color.startsWith("#"))
+                      ? {
+                          className: `${
+                            app.color
+                          } rounded-2xl p-6 shadow-md transition-all duration-300 ${
+                            isOpening ? "scale-110 shadow-xl" : ""
+                          }`,
+                        }
+                      : {})}
                   >
                     {renderIcon()}
                   </div>
@@ -212,7 +226,19 @@ export default function AppLauncher() {
               return (
                 <div className="animate-in zoom-in duration-500 ease-out">
                   <div
-                    className={`${app.color} rounded-3xl p-8 shadow-2xl animate-pulse`}
+                    className={`rounded-3xl p-8 shadow-2xl animate-pulse`}
+                    style={
+                      app.color &&
+                      (app.color.startsWith("hsl") || app.color.startsWith("#"))
+                        ? { backgroundColor: app.color }
+                        : undefined
+                    }
+                    {...(app.color &&
+                    !(app.color.startsWith("hsl") || app.color.startsWith("#"))
+                      ? {
+                          className: `${app.color} rounded-3xl p-8 shadow-2xl animate-pulse`,
+                        }
+                      : {})}
                   >
                     {renderPreviewIcon()}
                   </div>
