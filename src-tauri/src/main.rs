@@ -4,8 +4,11 @@
 use tauri::Manager;
 use tauri::AppHandle;
 use std::fs;
-use std::path::Path;
 use std::io::{BufRead, BufReader};
+use std::process::Command;
+use std::thread;
+use std::time::Duration;
+use std::env;
 
 #[tauri::command]
 fn get_apps_config(app_handle: AppHandle) -> String {
@@ -35,25 +38,37 @@ fn save_apps_config(app_handle: AppHandle, config: String) {
 }
 
 #[tauri::command]
-fn launch_application(command: String) {
+fn launch_application(command: String, app_handle: AppHandle) {
   println!("Launching application: {}", command);
   #[cfg(target_os = "windows")]
   {
-    use std::process::Command;
     Command::new("cmd")
             .args(["/C", &command])
             .spawn()
             .expect("failed to execute process");
   }
 
-  #[cfg(not(target_os = "windows"))]
+  #[cfg(target_os = "macos")]
   {
-    use std::process::Command;
     Command::new("sh")
             .arg("-c")
             .arg(&command)
             .spawn()
             .expect("failed to execute process");
+  }
+
+  #[cfg(target_os = "linux")]
+  {
+    // Use the launch_and_move.sh script to launch the app and move its window
+    let resource_dir = app_handle.path().resource_dir().unwrap();
+    let script = resource_dir.join("bundled-bin/launch_and_move.sh");
+    let _ = Command::new("chmod").arg("+x").arg(&script).status();
+    // Pass the command to the script
+    let _ = Command::new(script)
+      .arg("sh")
+      .arg("-c")
+      .arg(&command)
+      .spawn();
   }
 }
 
