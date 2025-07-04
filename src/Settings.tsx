@@ -232,6 +232,7 @@ export default function Settings({ onClose, onSave }: SettingsProps) {
       : [...apps, editingApp];
 
     setApps(updatedApps);
+    updateAppInList(editingApp); // Call updateAppInList to save changes
     setEditingApp(null);
   };
 
@@ -477,12 +478,12 @@ export default function Settings({ onClose, onSave }: SettingsProps) {
                         className="flex-1 px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="Enter command to run"
                       />
-                      <button
+                      {/* <button
                         onClick={() => setShowAppChooser(true)}
                         className="px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-100 rounded-lg transition-colors"
                       >
                         Choose App
-                      </button>
+                      </button> */}
                       <button
                         onClick={handleOpenSystemAppChooser}
                         className="px-4 py-2 bg-purple-500/20 hover:bg-purple-500/30 text-purple-100 rounded-lg transition-colors"
