@@ -9,6 +9,8 @@ use std::process::Command;
 use std::thread;
 use std::time::Duration;
 use std::env;
+use tauri_plugin_autostart::MacosLauncher;
+use tauri_plugin_autostart::ManagerExt;
 
 #[tauri::command]
 fn get_apps_config(app_handle: AppHandle) -> String {
@@ -18,8 +20,7 @@ fn get_apps_config(app_handle: AppHandle) -> String {
     if !config_path.exists() {
         let default_config = r#"[
             { "id": 1, "name": "Text Editor", "icon": "Code", "color": "bg-blue-500", "iconColor": "text-gray-600", "command": "xed" },
-            { "id": 2, "name": "File Manager", "icon": "Folder", "color": "bg-yellow-500", "iconColor": "text-gray-600", "command": "nautilus" },
-            { "id": 99, "name": "Settings", "icon": "Settings", "color": "bg-gray-400/50", "iconColor": "text-gray-600", "command": "settings" }
+            { "id": 2, "name": "File Manager", "icon": "Folder", "color": "bg-yellow-500", "iconColor": "text-gray-600", "command": "nautilus" }
         ]"#;
         fs::create_dir_all(&config_dir).expect("Unable to create config directory");
         fs::write(&config_path, default_config).expect("Unable to write default config");
@@ -107,12 +108,27 @@ fn list_system_apps() -> String {
     serde_json::to_string(&apps).unwrap_or("[]".to_string())
 }
 
+#[tauri::command]
+fn is_autostart_enabled(app_handle: AppHandle) -> bool {
+    app_handle.autolaunch().is_enabled().unwrap_or(false)
+}
+
+#[tauri::command]
+fn set_autostart_enabled(app_handle: AppHandle, enabled: bool) -> bool {
+    if enabled {
+        app_handle.autolaunch().enable().is_ok()
+    } else {
+        app_handle.autolaunch().disable().is_ok()
+    }
+}
+
 fn main() {
     // Set an environment variable programmatically
     std::env::set_var("GDK_BACKEND", "x11");
     std::env::set_var("WEBKIT_DISABLE_COMPOSITING_MODE", "1");
 
     tauri::Builder::default()
+        .plugin(tauri_plugin_autostart::init(MacosLauncher::LaunchAgent, None))
         .setup(|app| {
             // Find the monitor with the smallest resolution
             let smallest_monitor = app
@@ -136,7 +152,9 @@ fn main() {
             launch_application,
             get_apps_config,
             save_apps_config,
-            list_system_apps
+            list_system_apps,
+            is_autostart_enabled,
+            set_autostart_enabled
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

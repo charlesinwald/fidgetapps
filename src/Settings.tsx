@@ -6,35 +6,8 @@ import {
   Upload,
   Plus,
   Trash2,
-  Save,
   X,
   Monitor,
-  Folder,
-  Code,
-  Settings as SettingsIcon,
-  Image,
-  FileText,
-  Music,
-  Video,
-  Archive,
-  Terminal,
-  Globe,
-  Mail,
-  Camera,
-  Phone,
-  Clock,
-  Calendar,
-  Heart,
-  Star,
-  Home,
-  User,
-  Users,
-  MapPin,
-  Flag,
-  Edit3,
-  Eye,
-  Download,
-  ExternalLink,
   ChevronLeft,
   ChevronRight,
   Package,
@@ -64,65 +37,6 @@ const allIconNames = Object.keys(iconMap).filter(
   (name) => name !== "createLucideIcon" && name !== "default"
 ) as string[];
 
-// Common app categories and their typical commands
-const commonApps = [
-  { name: "Text Editor", command: "code", category: "Development" },
-  { name: "Terminal", command: "gnome-terminal", category: "Development" },
-  { name: "File Manager", command: "nautilus", category: "System" },
-  { name: "Web Browser", command: "firefox", category: "Internet" },
-  { name: "Chrome", command: "google-chrome", category: "Internet" },
-  { name: "VSCode", command: "code", category: "Development" },
-  { name: "Sublime Text", command: "subl", category: "Development" },
-  { name: "Vim", command: "vim", category: "Development" },
-  { name: "Emacs", command: "emacs", category: "Development" },
-  { name: "Calculator", command: "gnome-calculator", category: "Utilities" },
-  { name: "Screenshot", command: "gnome-screenshot", category: "Utilities" },
-  { name: "Settings", command: "gnome-control-center", category: "System" },
-  { name: "Music Player", command: "rhythmbox", category: "Media" },
-  { name: "Video Player", command: "vlc", category: "Media" },
-  { name: "Image Viewer", command: "eog", category: "Media" },
-  { name: "GIMP", command: "gimp", category: "Graphics" },
-  { name: "Inkscape", command: "inkscape", category: "Graphics" },
-  {
-    name: "LibreOffice Writer",
-    command: "libreoffice --writer",
-    category: "Office",
-  },
-  {
-    name: "LibreOffice Calc",
-    command: "libreoffice --calc",
-    category: "Office",
-  },
-  { name: "Discord", command: "discord", category: "Communication" },
-  { name: "Slack", command: "slack", category: "Communication" },
-  { name: "Zoom", command: "zoom", category: "Communication" },
-];
-
-const colorOptions = [
-  "bg-red-500",
-  "bg-orange-500",
-  "bg-yellow-500",
-  "bg-green-500",
-  "bg-blue-500",
-  "bg-indigo-500",
-  "bg-purple-500",
-  "bg-pink-500",
-  "bg-gray-500",
-  "bg-slate-500",
-  "bg-zinc-500",
-  "bg-neutral-500",
-  "bg-stone-500",
-  "bg-red-600",
-  "bg-orange-600",
-  "bg-yellow-600",
-  "bg-green-600",
-  "bg-blue-600",
-  "bg-indigo-600",
-  "bg-purple-600",
-  "bg-pink-600",
-  "bg-gray-600",
-];
-
 const iconColorOptions = [
   "text-white",
   "text-gray-100",
@@ -146,17 +60,16 @@ export default function Settings({ onClose, onSave }: SettingsProps) {
   const [apps, setApps] = useState<AppConfig[]>([]);
   const [editingApp, setEditingApp] = useState<AppConfig | null>(null);
   const [showIconPicker, setShowIconPicker] = useState(false);
-  const [showAppChooser, setShowAppChooser] = useState(false);
   const [iconSearch, setIconSearch] = useState("");
-  const [appSearch, setAppSearch] = useState("");
   const [customIconFile, setCustomIconFile] = useState<File | null>(null);
   const [iconPage, setIconPage] = useState(0);
-  const [selectedCategory, setSelectedCategory] = useState("All");
   const [showSystemAppChooser, setShowSystemAppChooser] = useState(false);
   const [systemApps, setSystemApps] = useState<
     { name: string; exec: string }[]
   >([]);
   const [systemAppSearch, setSystemAppSearch] = useState("");
+  const [autostart, setAutostart] = useState(false);
+  const [autostartLoading, setAutostartLoading] = useState(true);
 
   const iconsPerPage = 48;
 
@@ -166,6 +79,9 @@ export default function Settings({ onClose, onSave }: SettingsProps) {
         setApps(JSON.parse(configStr));
       })
       .catch(console.error);
+    invoke<boolean>("is_autostart_enabled")
+      .then((enabled) => setAutostart(enabled))
+      .finally(() => setAutostartLoading(false));
   }, []);
 
   const filteredIcons = allIconNames.filter((name) =>
@@ -178,20 +94,6 @@ export default function Settings({ onClose, onSave }: SettingsProps) {
   ) as (keyof typeof iconMap)[];
 
   const totalPages = Math.ceil(filteredIcons.length / iconsPerPage);
-
-  const categories = [
-    "All",
-    ...Array.from(new Set(commonApps.map((app) => app.category))),
-  ];
-
-  const filteredApps = commonApps.filter((app) => {
-    const matchesSearch =
-      app.name.toLowerCase().includes(appSearch.toLowerCase()) ||
-      app.command.toLowerCase().includes(appSearch.toLowerCase());
-    const matchesCategory =
-      selectedCategory === "All" || app.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
 
   const handleAddApp = () => {
     const newApp: AppConfig = {
@@ -217,6 +119,8 @@ export default function Settings({ onClose, onSave }: SettingsProps) {
     if (confirm("Are you sure you want to delete this shortcut?")) {
       setApps(apps.filter((app) => app.id !== id));
     }
+    if (typeof onSave === "function") onSave();
+    handleSaveAll();
   };
 
   const handleSaveApp = () => {
@@ -275,17 +179,6 @@ export default function Settings({ onClose, onSave }: SettingsProps) {
       setShowIconPicker(false);
     };
     reader.readAsDataURL(file);
-  };
-
-  const handleAppSelect = (app: (typeof commonApps)[0]) => {
-    if (editingApp) {
-      setEditingApp({
-        ...editingApp,
-        name: app.name,
-        command: app.command,
-      });
-      setShowAppChooser(false);
-    }
   };
 
   const handleSaveAll = () => {
@@ -356,6 +249,16 @@ export default function Settings({ onClose, onSave }: SettingsProps) {
     });
   };
 
+  const handleAutostartToggle = () => {
+    setAutostartLoading(true);
+    invoke<boolean>("set_autostart_enabled", { enabled: !autostart })
+      .then((ok) => {
+        if (ok) setAutostart((prev) => !prev);
+        else alert("Failed to update autostart setting");
+      })
+      .finally(() => setAutostartLoading(false));
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-2xl">
       <div className="w-11/12 h-5/6 bg-white/30 border border-white/30 rounded-2xl shadow-2xl backdrop-blur-2xl flex flex-col overflow-hidden">
@@ -367,6 +270,33 @@ export default function Settings({ onClose, onSave }: SettingsProps) {
             className="p-2 rounded-lg hover:bg-white/10 transition-colors"
           >
             <X className="w-6 h-6 text-white" />
+          </button>
+        </div>
+
+        {/* Autostart Toggle */}
+        <div className="flex items-center gap-4 p-6 border-b border-white/20 bg-white/10">
+          <label
+            className="text-white text-lg font-medium flex-1"
+            htmlFor="autostart-toggle"
+          >
+            Start FidgetApps on system startup
+          </label>
+          <button
+            id="autostart-toggle"
+            onClick={handleAutostartToggle}
+            disabled={autostartLoading}
+            className={`w-14 h-8 rounded-full border-2 transition-colors duration-200 flex items-center px-1 ${
+              autostart
+                ? "bg-green-400 border-green-500"
+                : "bg-gray-400 border-gray-500"
+            } ${autostartLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+            aria-pressed={autostart}
+          >
+            <span
+              className={`inline-block w-6 h-6 rounded-full bg-white shadow transform transition-transform duration-200 ${
+                autostart ? "translate-x-6" : ""
+              }`}
+            ></span>
           </button>
         </div>
 
@@ -400,17 +330,15 @@ export default function Settings({ onClose, onSave }: SettingsProps) {
                     <div className="text-sm text-gray-300">{app.command}</div>
                   </div>
                   <div className="flex gap-2">
-                    {app.command !== "settings" && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteApp(app.id);
-                        }}
-                        className="p-2 hover:bg-red-500/20 rounded-lg transition-colors"
-                      >
-                        <Trash2 className="w-6 h-6 text-red-300" />
-                      </button>
-                    )}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteApp(app.id);
+                      }}
+                      className="p-2 hover:bg-red-500/20 rounded-lg transition-colors"
+                    >
+                      <Trash2 className="w-6 h-6 text-red-300" />
+                    </button>
                   </div>
                 </div>
               ))}
@@ -478,12 +406,7 @@ export default function Settings({ onClose, onSave }: SettingsProps) {
                         className="flex-1 px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="Enter command to run"
                       />
-                      {/* <button
-                        onClick={() => setShowAppChooser(true)}
-                        className="px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-100 rounded-lg transition-colors"
-                      >
-                        Choose App
-                      </button> */}
+
                       <button
                         onClick={handleOpenSystemAppChooser}
                         className="px-4 py-2 bg-purple-500/20 hover:bg-purple-500/30 text-purple-100 rounded-lg transition-colors"
@@ -685,80 +608,6 @@ export default function Settings({ onClose, onSave }: SettingsProps) {
                     </button>
                   );
                 })}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* App Chooser Modal */}
-      {showAppChooser && (
-        <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="w-3/4 h-3/4 bg-white/10 border border-white/30 rounded-2xl shadow-2xl backdrop-blur-xl flex flex-col">
-            <div className="flex items-center justify-between p-6 border-b border-white/20">
-              <h3 className="text-xl font-semibold text-white">
-                Choose Application
-              </h3>
-              <button
-                onClick={() => setShowAppChooser(false)}
-                className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-              >
-                <X className="w-6 h-6 text-white" />
-              </button>
-            </div>
-
-            <div className="p-6 space-y-4">
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <input
-                      type="text"
-                      placeholder="Search applications..."
-                      value={appSearch}
-                      onChange={(e) => setAppSearch(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  {categories.map((category) => (
-                    <option
-                      key={category}
-                      value={category}
-                      className="bg-gray-800"
-                    >
-                      {category}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-6">
-              <div className="grid grid-cols-2 gap-4">
-                {filteredApps.map((app, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleAppSelect(app)}
-                    className="flex items-center gap-4 p-4 bg-white/5 hover:bg-white/15 rounded-lg transition-colors text-left"
-                  >
-                    <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                      <Monitor className="w-6 h-6 text-blue-300" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-medium text-white">{app.name}</div>
-                      <div className="text-sm text-gray-300">{app.command}</div>
-                      <div className="text-xs text-gray-400">
-                        {app.category}
-                      </div>
-                    </div>
-                  </button>
-                ))}
               </div>
             </div>
           </div>

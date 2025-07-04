@@ -26,6 +26,7 @@ export default function AppLauncher() {
     invoke<string>("get_apps_config")
       .then((configStr) => {
         setApps(JSON.parse(configStr));
+        console.log(JSON.parse(configStr));
       })
       .catch(console.error);
   };
@@ -40,10 +41,7 @@ export default function AppLauncher() {
     const app = apps.find((a) => a.id === appId);
     if (!app) return;
 
-    if (app.command === "settings") {
-      setShowSettings(true);
-      return;
-    }
+    
 
     setOpeningApp(appId);
     setIsAnimating(true);
@@ -67,6 +65,14 @@ export default function AppLauncher() {
       {showSettings && (
         <Settings onClose={handleSettingsClose} onSave={loadConfig} />
       )}
+      {/* Settings Button */}
+      <button
+        onClick={() => setShowSettings(true)}
+        className="absolute top-4 right-4 p-3 rounded-full bg-white/20 backdrop-blur-lg shadow-lg text-white hover:bg-white/30 transition-colors z-50"
+        aria-label="Open Settings"
+      >
+        <lucideIcons.Settings className="w-6 h-6" />
+      </button>
       {/* Glassmorphism Container */}
       <div className="relative w-[90vh] h-[90vh]">
         {/* Main launcher container */}
